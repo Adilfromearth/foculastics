@@ -7,8 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C53048232AC2822F003738A6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53048222AC2822F003738A6 /* SettingsView.swift */; };
+		C55154BA2AC2FD0400C6F9AE /* TutorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55154B92AC2FD0400C6F9AE /* TutorialView.swift */; };
+		C55E23D42AC4597100F0ABAD /* StopwatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55E23D32AC4597100F0ABAD /* StopwatchView.swift */; };
+		C55E23D62AC463C200F0ABAD /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55E23D52AC463C200F0ABAD /* MainView.swift */; };
 		C58CFD3B2AC13C1D007D76F2 /* foculasticsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58CFD3A2AC13C1D007D76F2 /* foculasticsApp.swift */; };
-		C58CFD3D2AC13C1D007D76F2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58CFD3C2AC13C1D007D76F2 /* ContentView.swift */; };
+		C58CFD3D2AC13C1D007D76F2 /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58CFD3C2AC13C1D007D76F2 /* TimerView.swift */; };
 		C58CFD3F2AC13C1F007D76F2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C58CFD3E2AC13C1F007D76F2 /* Assets.xcassets */; };
 		C58CFD422AC13C1F007D76F2 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C58CFD412AC13C1F007D76F2 /* Preview Assets.xcassets */; };
 		C58CFD442AC13C1F007D76F2 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58CFD432AC13C1F007D76F2 /* Persistence.swift */; };
@@ -16,13 +20,19 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C53048222AC2822F003738A6 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		C55154B92AC2FD0400C6F9AE /* TutorialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialView.swift; sourceTree = "<group>"; };
+		C55E23D32AC4597100F0ABAD /* StopwatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopwatchView.swift; sourceTree = "<group>"; };
+		C55E23D52AC463C200F0ABAD /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		C58CFD372AC13C1D007D76F2 /* foculastics.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = foculastics.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C58CFD3A2AC13C1D007D76F2 /* foculasticsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = foculasticsApp.swift; sourceTree = "<group>"; };
-		C58CFD3C2AC13C1D007D76F2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C58CFD3C2AC13C1D007D76F2 /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
 		C58CFD3E2AC13C1F007D76F2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C58CFD412AC13C1F007D76F2 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C58CFD432AC13C1F007D76F2 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		C58CFD462AC13C1F007D76F2 /* foculastics.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = foculastics.xcdatamodel; sourceTree = "<group>"; };
+		C5D6238F2AC85D070091CB58 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
+		C5D623912AC85D110091CB58 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +51,7 @@
 			children = (
 				C58CFD392AC13C1D007D76F2 /* foculastics */,
 				C58CFD382AC13C1D007D76F2 /* Products */,
+				C5D6238E2AC85D070091CB58 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -55,10 +66,14 @@
 		C58CFD392AC13C1D007D76F2 /* foculastics */ = {
 			isa = PBXGroup;
 			children = (
-				C58CFD3A2AC13C1D007D76F2 /* foculasticsApp.swift */,
-				C58CFD3C2AC13C1D007D76F2 /* ContentView.swift */,
+				C55E23D32AC4597100F0ABAD /* StopwatchView.swift */,
+				C58CFD3C2AC13C1D007D76F2 /* TimerView.swift */,
+				C53048222AC2822F003738A6 /* SettingsView.swift */,
+				C55154B92AC2FD0400C6F9AE /* TutorialView.swift */,
+				C55E23D52AC463C200F0ABAD /* MainView.swift */,
 				C58CFD3E2AC13C1F007D76F2 /* Assets.xcassets */,
 				C58CFD432AC13C1F007D76F2 /* Persistence.swift */,
+				C58CFD3A2AC13C1D007D76F2 /* foculasticsApp.swift */,
 				C58CFD452AC13C1F007D76F2 /* foculastics.xcdatamodeld */,
 				C58CFD402AC13C1F007D76F2 /* Preview Content */,
 			);
@@ -71,6 +86,15 @@
 				C58CFD412AC13C1F007D76F2 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		C5D6238E2AC85D070091CB58 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C5D623912AC85D110091CB58 /* Metal.framework */,
+				C5D6238F2AC85D070091CB58 /* MetalKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -143,10 +167,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C55154BA2AC2FD0400C6F9AE /* TutorialView.swift in Sources */,
+				C55E23D62AC463C200F0ABAD /* MainView.swift in Sources */,
+				C53048232AC2822F003738A6 /* SettingsView.swift in Sources */,
 				C58CFD472AC13C1F007D76F2 /* foculastics.xcdatamodeld in Sources */,
 				C58CFD442AC13C1F007D76F2 /* Persistence.swift in Sources */,
-				C58CFD3D2AC13C1D007D76F2 /* ContentView.swift in Sources */,
+				C58CFD3D2AC13C1D007D76F2 /* TimerView.swift in Sources */,
 				C58CFD3B2AC13C1D007D76F2 /* foculasticsApp.swift in Sources */,
+				C55E23D42AC4597100F0ABAD /* StopwatchView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

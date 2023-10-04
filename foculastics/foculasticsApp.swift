@@ -1,20 +1,21 @@
-//
-//  foculasticsApp.swift
-//  foculastics
-//
-//  Created by Adil on 25.09.2023.
-//
-
 import SwiftUI
 
 @main
 struct foculasticsApp: App {
     let persistenceController = PersistenceController.shared
+    
+    @State private var showStopwatch: Bool = false
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            if showStopwatch {
+                StopwatchView(showStopwatch: $showStopwatch)
+                    .accentColor(.black) // Setting accent color to black
+            } else {
+                TimerView(showStopwatch: $showStopwatch)
+                    .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                    .accentColor(.black) // Setting accent color to black
+            }
         }
     }
 }

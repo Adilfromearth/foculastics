@@ -3,37 +3,67 @@ import Combine
 
 struct TimerView: View {
     @State private var totalTime: Double = 1500.0
-    @State private var selectedTime: Double = 1500.0
-    @State private var remainingTime: Double = 1500.0
+    @State private var elapsedSeconds: Int = 0
+    @State private var rotationAngle: Double = 0
     @State private var timer: Timer? = nil
-    @State private var isActive = false
+    @State private var isTimerActive = false
     @State private var showMenu = false
     @State private var showSettings: Bool = false
     @State private var showTutorial: Bool = UserDefaults.standard.bool(forKey: "hasLaunchedBefore") == false
-    
-    let availableTimes: [Int] = [300, 1200, 1500, 1800, 2700, 3000, 3600, 5400] // In seconds
+
+    @Binding var showStopwatch: Bool
+
+    let availableTimes: [Int] = [300, 900, 1500, 2700, 3000, 3600, 5400]
 
     var body: some View {
         ZStack {
-            VStack {
-                Spacer()  // Spacer added here to push the timer to the middle
-                
-                Text(timeString(time: Int(remainingTime)))
-                    .font(.largeTitle)
-                    .padding()
-                    .onTapGesture {
-                        withAnimation {
-                            showMenu.toggle()
-                        }
-                    }
-                
-                Button(action: startOrCancelTimer) {
-                    Text(isActive ? "Cancel" : "Start")
+               if showMenu {
+                   Color.black.opacity(0.4)
+                       .edgesIgnoringSafeArea(.all)
+                       .onTapGesture {
+                           withAnimation {
+                               showMenu = false
+                           }
+                       }
+               }
+
+               VStack {
+                   Text(timeString(time: Int(totalTime) - elapsedSeconds))
+                       .font(.largeTitle)
+                       .padding(.top, 40)
+                       .onTapGesture {
+                           withAnimation {
+                               showMenu.toggle()
+                           }
+                       }
+
+                   Spacer()
+
+                   ZStack {
+                       CubeView(rotationAngle: rotationAngle)
+                           .frame(width: 100, height: 100)
+                           .offset(x: 0, y: 20)
+                           .animation(.easeInOut(duration: 1.0), value: rotationAngle)
+                   }
+
+                Spacer()
+                   
+                   
+                Button(action: startOrStopTimer) {
+                    Text(isTimerActive ? "Stop" : "Start")
                 }
-                .padding()
-                
-                Spacer()  // This Spacer will push the settings button to the bottom
-                
+                .foregroundColor(Color.primary)
+                .padding(.bottom, 30)
+
+                Button(action: {
+                    self.showStopwatch = true
+                }) {
+                    Image(systemName: "stopwatch.fill")
+                        .font(.system(size: 24))
+                }
+                .foregroundColor(Color.primary)
+                .padding(.bottom, 20)
+
                 Button(action: {
                     showSettings.toggle()
                 }) {
@@ -41,28 +71,19 @@ struct TimerView: View {
                         .frame(width: 30, height: 30)
                         .font(.system(size: 30))
                 }
+                .foregroundColor(Color.primary)
                 .padding(.bottom, 10)
             }
-            .onDisappear {
-                timer?.invalidate()
-            }
             .padding()
-            
+
+            // Menu
             if showMenu {
-                Color.black.opacity(0.4)
-                    .edgesIgnoringSafeArea(.all)
-                    .onTapGesture {
-                        withAnimation {
-                            showMenu = false
-                        }
-                    }
-                
                 VStack(alignment: .center, spacing: 5) {
                     ForEach(availableTimes, id: \.self) { time in
                         Button(action: {
-                            selectedTime = Double(time)
-                            totalTime = selectedTime
-                            remainingTime = totalTime
+                            totalTime = Double(time)
+                            elapsedSeconds = 0
+                            rotationAngle = 0
                             withAnimation {
                                 showMenu = false
                             }
@@ -78,7 +99,9 @@ struct TimerView: View {
                 }
                 .padding()
             }
-            
+        }
+        .onDisappear {
+            timer?.invalidate()
         }
         .sheet(isPresented: $showSettings) {
             SettingsView()
@@ -86,23 +109,25 @@ struct TimerView: View {
         .sheet(isPresented: $showTutorial, onDismiss: {
             UserDefaults.standard.set(true, forKey: "hasLaunchedBefore")
         }) {
-            TutorialView()
+            TutorialView(showTutorial: $showTutorial)
         }
     }
 
-    func startOrCancelTimer() {
-        if isActive {
+    func startOrStopTimer() {
+        if isTimerActive {
             timer?.invalidate()
-            remainingTime = totalTime
-            isActive = false
+            elapsedSeconds = 0
+            rotationAngle = 0
+            isTimerActive = false
         } else {
-            isActive = true
+            isTimerActive = true
             timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-                if remainingTime > 0 {
-                    remainingTime -= 1
+                if elapsedSeconds < Int(totalTime) {
+                    elapsedSeconds += 1
+                    rotationAngle += 45
                 } else {
                     timer?.invalidate()
-                    isActive = false
+                    isTimerActive = false
                 }
             }
         }
@@ -115,8 +140,9 @@ struct TimerView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
+
+struct TimerView_Previews: PreviewProvider {
     static var previews: some View {
-        TimerView()
+        TimerView(showStopwatch: .constant(false))
     }
 }

@@ -4,12 +4,10 @@ struct MainView: View {
     @State private var showStopwatch: Bool = false
 
     var body: some View {
-        Group {
-            if showStopwatch {
-                StopwatchView()
-            } else {
-                TimerView(showStopwatch: $showStopwatch)
-            }
+        if showStopwatch {
+            StopwatchView(showStopwatch: $showStopwatch)
+        } else {
+            TimerView(showStopwatch: $showStopwatch)
         }
     }
 }
