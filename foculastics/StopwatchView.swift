@@ -7,6 +7,8 @@ struct StopwatchView: View {
     @State private var isStopwatchActive = false
     @State private var showSettings: Bool = false
     @State private var rotationAngle: Double = 0 // Angle for cube rotation
+    @State private var startTime: Date? = nil
+
 
     var body: some View {
         VStack {
@@ -68,12 +70,17 @@ struct StopwatchView: View {
             stopwatchTimer?.invalidate()
             isStopwatchActive = false
             elapsedSeconds = 0
-            rotationAngle = 0 // Reset the rotation angle
+            rotationAngle = 0
+            startTime = nil
         } else {
             isStopwatchActive = true
+            startTime = Date() // Store the start time
+
             stopwatchTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-                elapsedSeconds += 1
-                rotationAngle += 45 // Rotate the cube by 45 degrees
+                if let startTime = startTime {
+                    elapsedSeconds = Int(Date().timeIntervalSince(startTime))
+                    rotationAngle += 45
+                }
             }
         }
     }

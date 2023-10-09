@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import UserNotifications
 
 struct TimerView: View {
     @State private var totalTime: Double = 1500.0
@@ -10,7 +11,8 @@ struct TimerView: View {
     @State private var showMenu = false
     @State private var showSettings: Bool = false
     @State private var showTutorial: Bool = UserDefaults.standard.bool(forKey: "hasLaunchedBefore") == false
-
+    @State private var startTime: Date? = nil
+    
     @Binding var showStopwatch: Bool
 
     let availableTimes: [Int] = [300, 900, 1500, 2700, 3000, 3600, 5400]
@@ -44,6 +46,11 @@ struct TimerView: View {
                            .frame(width: 100, height: 100)
                            .offset(x: 0, y: 20)
                            .animation(.easeInOut(duration: 1.0), value: rotationAngle)
+                           .onTapGesture {
+                                       withAnimation {
+                                           showMenu.toggle()
+                                       }
+                                   }
                    }
 
                 Spacer()
@@ -100,6 +107,9 @@ struct TimerView: View {
                 .padding()
             }
         }
+        .onAppear {
+            requestNotificationPermission()
+        }
         .onDisappear {
             timer?.invalidate()
         }
@@ -119,15 +129,22 @@ struct TimerView: View {
             elapsedSeconds = 0
             rotationAngle = 0
             isTimerActive = false
+            startTime = nil
         } else {
             isTimerActive = true
+            startTime = Date() // Store the start time
+            
             timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-                if elapsedSeconds < Int(totalTime) {
-                    elapsedSeconds += 1
-                    rotationAngle += 45
-                } else {
-                    timer?.invalidate()
-                    isTimerActive = false
+                if let startTime = startTime {
+                    let currentElapsed = Int(Date().timeIntervalSince(startTime))
+                    if currentElapsed < Int(totalTime) {
+                        elapsedSeconds = currentElapsed
+                        rotationAngle += 45
+                    } else {
+                        timer?.invalidate()
+                        isTimerActive = false
+                        sendNotification()  // Send the notification
+                    }
                 }
             }
         }
@@ -138,8 +155,27 @@ struct TimerView: View {
         let seconds = time % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
-}
 
+    func requestNotificationPermission() {
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
+            // Handle the authorization request result.
+        }
+    }
+
+    func sendNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "Timer Finished"
+        content.body = "Good job, the timer has ended!"
+        content.sound = UNNotificationSound.default
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request)
+    }
+}
 
 struct TimerView_Previews: PreviewProvider {
     static var previews: some View {
