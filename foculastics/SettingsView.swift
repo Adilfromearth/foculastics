@@ -46,7 +46,7 @@ struct SettingsView: View {
                     .font(.title2)
                 }
                 .sheet(isPresented: $showShareSheet) {
-                    ShareSheet(activityItems: ["Foculastics - your tool for most productive work!"])
+                    ShareSheet(activityItems: ["Foculastics - your tool for most productive work! - https://apps.apple.com/us/app/foculastics-engaging-focus/id6468637887"])
                 }
 
                 Link(destination: URL(string: "http://foculastics.com/help.html")!) {

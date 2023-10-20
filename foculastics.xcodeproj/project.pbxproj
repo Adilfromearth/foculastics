@@ -17,6 +17,8 @@
 		C58CFD422AC13C1F007D76F2 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C58CFD412AC13C1F007D76F2 /* Preview Assets.xcassets */; };
 		C58CFD442AC13C1F007D76F2 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58CFD432AC13C1F007D76F2 /* Persistence.swift */; };
 		C58CFD472AC13C1F007D76F2 /* foculastics.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C58CFD452AC13C1F007D76F2 /* foculastics.xcdatamodeld */; };
+		C5B2EE442AE17D1E00E36350 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B2EE432AE17D1E00E36350 /* AppDelegate.swift */; };
+		C5B2EE462AE2AFFD00E36350 /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B2EE452AE2AFFD00E36350 /* Animations.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +34,8 @@
 		C58CFD412AC13C1F007D76F2 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C58CFD432AC13C1F007D76F2 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		C58CFD462AC13C1F007D76F2 /* foculastics.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = foculastics.xcdatamodel; sourceTree = "<group>"; };
+		C5B2EE432AE17D1E00E36350 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C5B2EE452AE2AFFD00E36350 /* Animations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Animations.swift; path = ../Animations.swift; sourceTree = "<group>"; };
 		C5D6238F2AC85D070091CB58 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 		C5D623912AC85D110091CB58 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -67,13 +71,15 @@
 		C58CFD392AC13C1D007D76F2 /* foculastics */ = {
 			isa = PBXGroup;
 			children = (
-				C55615082ACD9D4B00984EC2 /* Info.plist */,
 				C55E23D32AC4597100F0ABAD /* StopwatchView.swift */,
 				C58CFD3C2AC13C1D007D76F2 /* TimerView.swift */,
+				C5B2EE452AE2AFFD00E36350 /* Animations.swift */,
+				C58CFD3E2AC13C1F007D76F2 /* Assets.xcassets */,
+				C55615082ACD9D4B00984EC2 /* Info.plist */,
+				C5B2EE432AE17D1E00E36350 /* AppDelegate.swift */,
 				C53048222AC2822F003738A6 /* SettingsView.swift */,
 				C55154B92AC2FD0400C6F9AE /* TutorialView.swift */,
 				C55E23D52AC463C200F0ABAD /* MainView.swift */,
-				C58CFD3E2AC13C1F007D76F2 /* Assets.xcassets */,
 				C58CFD432AC13C1F007D76F2 /* Persistence.swift */,
 				C58CFD3A2AC13C1D007D76F2 /* foculasticsApp.swift */,
 				C58CFD452AC13C1F007D76F2 /* foculastics.xcdatamodeld */,
@@ -172,8 +178,10 @@
 				C55154BA2AC2FD0400C6F9AE /* TutorialView.swift in Sources */,
 				C55E23D62AC463C200F0ABAD /* MainView.swift in Sources */,
 				C53048232AC2822F003738A6 /* SettingsView.swift in Sources */,
+				C5B2EE442AE17D1E00E36350 /* AppDelegate.swift in Sources */,
 				C58CFD472AC13C1F007D76F2 /* foculastics.xcdatamodeld in Sources */,
 				C58CFD442AC13C1F007D76F2 /* Persistence.swift in Sources */,
+				C5B2EE462AE2AFFD00E36350 /* Animations.swift in Sources */,
 				C58CFD3D2AC13C1D007D76F2 /* TimerView.swift in Sources */,
 				C58CFD3B2AC13C1D007D76F2 /* foculasticsApp.swift in Sources */,
 				C55E23D42AC4597100F0ABAD /* StopwatchView.swift in Sources */,

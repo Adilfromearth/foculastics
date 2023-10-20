@@ -1,8 +1,15 @@
-//
-//  AppDelegate.swift
-//  foculastics
-//
-//  Created by Adil on 19.10.2023.
-//
+import UIKit
+import UserNotifications
 
-import Foundation
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+    
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        UNUserNotificationCenter.current().delegate = self
+        return true
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .sound])
+    }
+
+}

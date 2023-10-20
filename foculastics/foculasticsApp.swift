@@ -4,6 +4,8 @@ import SwiftUI
 struct foculasticsApp: App {
     let persistenceController = PersistenceController.shared
     
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     @State private var showStopwatch: Bool = false
 
     var body: some Scene {

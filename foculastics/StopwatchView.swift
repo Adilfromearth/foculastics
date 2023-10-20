@@ -1,3 +1,4 @@
+
 import SwiftUI
 
 struct StopwatchView: View {
@@ -5,85 +6,214 @@ struct StopwatchView: View {
     @State private var elapsedSeconds: Int = 0
     @State private var stopwatchTimer: Timer? = nil
     @State private var isStopwatchActive = false
-    @State private var showSettings: Bool = false
     @State private var rotationAngle: Double = 0 // Angle for cube rotation
     @State private var startTime: Date? = nil
-
+    @State private var currentTask: String = ""  // Task field
+    @State private var showMessageView: Bool = false  // Show/hide message view
+    @State private var messageText: String = ""  // Text for message view
+    @State private var showNextButton: Bool = false  // Show/hide Next button in message view
+    @State private var showSettings: Bool = false  // Show/hide settings view
+    @State private var showAlert: Bool = false
+    @State private var alertMessage: String = ""
+    @State private var currentAnimation: AnimationType = .originalCube
 
     var body: some View {
-        VStack {
-            Text(timeString(time: elapsedSeconds))
-                .font(.largeTitle)
-                .padding(.top, 40)
+        ZStack {
+            VStack {
+                Text(timeString(time: elapsedSeconds))
+                    .font(.largeTitle)
+                    .padding(.top, 40)
 
-            Spacer()
+                Spacer()
 
-            ZStack {
-                CubeView(rotationAngle: rotationAngle)
-                    .frame(width: 100, height: 100) // Size of the cube
+                ZStack {
+                    if currentAnimation == .originalCube {
+                        CubeView(rotationAngle: rotationAngle)
+                            .frame(width: 100, height: 100)
+                            .animation(.easeInOut(duration: 1.0), value: rotationAngle)
+                    } else if currentAnimation == .colorful1Cube {
+                        CubeView1(rotationAngle: rotationAngle)
+                        .frame(width: 100, height: 100)
+                        .animation(.easeInOut(duration: 1.0), value: rotationAngle)
+                    } else if currentAnimation == .colorful2Cube {
+                        CubeView2(rotationAngle: rotationAngle)
+                        .frame(width: 100, height: 100)
+                        .animation(.easeInOut(duration: 1.0), value: rotationAngle)
+                    } else if currentAnimation == .sphere {
+                        SphereView(rotationAngle: rotationAngle, isAnimating: $isStopwatchActive)
+                            .frame(width: 100, height: 100)
+                    }
+                    else if currentAnimation == .rainbowring {
+                        RainbowRingView(isAnimating: $isStopwatchActive)
+                            .frame(width: 100, height: 100)
+                    }
+                }
 
-                // Offset the cube slightly downward
-                .offset(x: 0, y: 20)
+                Spacer()
 
-                // Rotate the cube and add animation
-                .animation(.easeInOut(duration: 1.0), value: rotationAngle)
+                TextField("Your task", text: $currentTask)
+                    .font(.title)
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 30)
+
+                Button(action: startOrStopStopwatch) {
+                    Text(isStopwatchActive ? "Stop" : "Start")
+                        .font(.system(size: 20))
+                        
+                }
+                .foregroundColor(Color.primary)
+                .padding(.bottom, 30)
+                
+                Button(action: {
+                    showStopwatch = false
+                }) {
+                    Image(systemName: "timer")
+                        .font(.system(size: 24))
+                        .frame(width: 30, height: 30)  // Set a fixed frame size
+                }
+                .padding(.bottom)
+                .foregroundColor(Color.primary)
+                
+                HStack(spacing: 10) {
+                            Button(action: {
+                                switch currentAnimation {
+                                    case .originalCube:
+                                        currentAnimation = .rainbowring
+                                    case .colorful1Cube:
+                                        currentAnimation = .originalCube
+                                    case .colorful2Cube:
+                                        currentAnimation = .colorful1Cube
+                                    case .sphere:
+                                        currentAnimation = .colorful2Cube
+                                    case .rainbowring:
+                                        currentAnimation = .sphere
+                                }
+                            }) {
+                                Image(systemName: "arrow.left")
+                                    .font(.system(size: 24))
+                            }
+                            .padding(.trailing, 90)
+                            .foregroundColor(Color.primary)
+
+                            Button(action: {
+                                showSettings.toggle()
+                            }) {
+                                Image(systemName: "ellipsis")
+                                    .frame(width: 30, height: 30)
+                                    .font(.system(size: 30))
+                            }
+                            .foregroundColor(Color.primary)
+
+                            Button(action: {
+                                switch currentAnimation {
+                                    case .originalCube:
+                                       currentAnimation = .colorful1Cube
+                                   case .colorful1Cube:
+                                       currentAnimation = .colorful2Cube
+                                   case .colorful2Cube:
+                                       currentAnimation = .sphere
+                                   case .sphere:
+                                       currentAnimation = .rainbowring
+                                   case .rainbowring:
+                                       currentAnimation = .originalCube
+                                }
+                            }) {
+                                Image(systemName: "arrow.right")
+                                    .font(.system(size: 24))
+                            }
+                            .padding(.leading, 90)
+                            .foregroundColor(Color.primary)
+                        }
+                        .padding(.bottom, 5)
+                        .padding(.top, 10)
             }
+            .padding()
+            .blur(radius: showMessageView ? 5 : 0)
 
-            Spacer()
-
-            Button(action: startOrStopStopwatch) {
-                Text(isStopwatchActive ? "Stop" : "Start")
+            if showMessageView {
+                // Custom completion message view
+                VStack(spacing: 20) {
+                    Text(messageText)
+                        .font(.headline)
+                        .foregroundColor(.black)
+                    
+                    
+                    if showNextButton {
+                        Button("Next") {
+                            showMessageView = false
+                        }
+                        .font(.system(size: 20))
+                        .padding()
+                        .frame(minWidth: 100, minHeight: 30)
+                        .cornerRadius(8)
+                    } else {
+                        HStack(spacing: 30) {
+                            Button("Yes") {
+                                messageText = "Great job on completing \(currentTask). Keep the flow!"
+                                showNextButton = true
+                            }
+                            .font(.system(size: 20))
+                            .padding()
+                            .frame(minWidth: 100, minHeight: 30)
+                            .cornerRadius(8)
+                            
+                            Button("No") {
+                                messageText = "Stay focused and try again. You can do it!"
+                                showNextButton = true
+                            }
+                            .font(.system(size: 20))
+                            .padding()
+                            .frame(minWidth: 100, minHeight: 30)
+                            .cornerRadius(8)
+                        }
+                    }
+                }
+                .padding()
+                .frame(width: 300, height: 150)
+                .background(Color.white)
+                .cornerRadius(15)
+                .shadow(radius: 10)
             }
-            .foregroundColor(Color.primary)
-            .padding(.bottom, 30)
-
-            Button(action: {
-                showStopwatch = false
-            }) {
-                Image(systemName: "timer")
-                    .font(.system(size: 24))
-            }
-            .foregroundColor(Color.primary)
-            .padding(.bottom, 20)
-
-            Button(action: {
-                showSettings.toggle()
-            }) {
-                Image(systemName: "ellipsis")
-                    .frame(width: 30, height: 30)
-                    .font(.system(size: 30))
-            }
-            .foregroundColor(Color.primary)
-            .padding(.bottom, 10)
-        }
-        .padding()
-        .onDisappear {
-            stopwatchTimer?.invalidate()
         }
         .sheet(isPresented: $showSettings) {
-            SettingsView()
+                    SettingsView()
         }
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("Alert"), message: Text(alertMessage), dismissButton: .default(Text("Okay")))
+        }
+
     }
 
     func startOrStopStopwatch() {
-        if isStopwatchActive {
-            stopwatchTimer?.invalidate()
-            isStopwatchActive = false
-            elapsedSeconds = 0
-            rotationAngle = 0
-            startTime = nil
-        } else {
-            isStopwatchActive = true
-            startTime = Date() // Store the start time
-
-            stopwatchTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-                if let startTime = startTime {
-                    elapsedSeconds = Int(Date().timeIntervalSince(startTime))
-                    rotationAngle += 45
+        withAnimation {
+            if isStopwatchActive {
+                stopwatchTimer?.invalidate()
+                isStopwatchActive = false
+                elapsedSeconds = 0  // Reset elapsed time to 0
+                rotationAngle = 0
+                messageText = "Did you complete \(currentTask)?"
+                showMessageView = true
+                showNextButton = false
+                currentTask = ""  // Clear the task field
+            } else {
+                if currentTask.isEmpty {
+                    alertMessage = "Please enter a task before starting the time."
+                    showAlert = true
+                    return
+                }
+                isStopwatchActive = true
+                startTime = Date()
+                stopwatchTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+                    if let startTime = startTime {
+                        elapsedSeconds = Int(Date().timeIntervalSince(startTime))
+                        rotationAngle += 45
+                    }
                 }
             }
         }
     }
+
+
 
     func timeString(time: Int) -> String {
         let minutes = time / 60
@@ -95,78 +225,5 @@ struct StopwatchView: View {
 struct StopwatchView_Previews: PreviewProvider {
     static var previews: some View {
         StopwatchView(showStopwatch: .constant(true))
-    }
-}
-
-struct CubeView: View {
-    let rotationAngle: Double
-
-    var body: some View {
-        ZStack {
-            // Front side
-            Rectangle()
-                .fill(Color(UIColor(red: 46/255, green: 46/255, blue: 46/255, alpha: 1)))
-                .cornerRadius(20)
-                .frame(width: 100, height: 100)
-                .rotation3DEffect(
-                    .degrees(rotationAngle), // Rotate the cube
-                    axis: (x: 0, y: 1, z: 0), // Around the Y-axis
-                    anchor: .center,
-                    perspective: 1.0
-                )
-                .zIndex(1)
-
-            // Left side
-            Rectangle()
-                .fill(Color.red)
-                .cornerRadius(20)
-                .frame(width: 100, height: 100)
-                .rotation3DEffect(
-                    .degrees(rotationAngle - 90), // Rotate the cube
-                    axis: (x: 0, y: 1, z: 0), // Around the Y-axis
-                    anchor: .center,
-                    perspective: 1.0
-                )
-                .zIndex(0)
-
-            // Right side
-            Rectangle()
-                .fill(Color(UIColor(red: 84/255, green: 84/255, blue: 84/255, alpha: 1)))
-                .cornerRadius(20)
-                .frame(width: 100, height: 100)
-                .rotation3DEffect(
-                    .degrees(rotationAngle + 90), // Rotate the cube
-                    axis: (x: 0, y: 1, z: 0), // Around the Y-axis
-                    anchor: .center,
-                    perspective: 1.0
-                )
-                .zIndex(0)
-
-            // Top side
-            Rectangle()
-                .fill(Color(UIColor(red: 217/255, green: 217/255, blue: 217/255, alpha: 1)))
-                .cornerRadius(20)
-                .frame(width: 100, height: 100)
-                .rotation3DEffect(
-                    .degrees(rotationAngle + 90), // Rotate the cube
-                    axis: (x: 1, y: 0, z: 0), // Around the X-axis
-                    anchor: .center,
-                    perspective: 1.0
-                )
-                .zIndex(0)
-
-            // Back side
-            Rectangle()
-                .fill(Color.orange)
-                .cornerRadius(20)
-                .frame(width: 100, height: 100)
-                .rotation3DEffect(
-                    .degrees(rotationAngle + 180), // Rotate the cube
-                    axis: (x: 0, y: 1, z: 0), // Around the Y-axis
-                    anchor: .center,
-                    perspective: 1.0
-                )
-                .zIndex(0)
-        }
     }
 }
