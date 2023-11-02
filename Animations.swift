@@ -1,5 +1,12 @@
 import SwiftUI
 import Combine
+import AVFoundation
+
+class AnimationManager: ObservableObject {
+    @Published var isAnimatingSphere: Bool = false
+    @Published var isAnimatingRainbowRing: Bool = false
+    @Published var animationProgress: Double = 0.0
+}
 
 struct CubeView: View {
     let rotationAngle: Double
@@ -102,7 +109,7 @@ struct CubeView2: View {
         ZStack {
             // Front side
             Rectangle()
-                .fill(Color.purple)
+                .fill(Color.yellow)
                 .cornerRadius(20)
                 .frame(width: 100, height: 100)
                 .rotation3DEffect(
@@ -115,7 +122,7 @@ struct CubeView2: View {
 
             // Right side
             Rectangle()
-                .fill(Color.pink)
+                .fill(Color.red)
                 .cornerRadius(20)
                 .frame(width: 100, height: 100)
                 .rotation3DEffect(
@@ -144,22 +151,21 @@ struct CubeView2: View {
 
 struct SphereView: View {
     let rotationAngle: Double
-    @Binding var isAnimating: Bool
+    @ObservedObject var animationManager: AnimationManager
 
     var body: some View {
         Circle()
-            .fill(LinearGradient(gradient: Gradient(colors: [Color.orange, Color.red]), startPoint: .top, endPoint: .bottom))
-            .frame(width: isAnimating ? 110 : 100, height: isAnimating ? 110 : 100)
+            .fill(LinearGradient(gradient: Gradient(colors: [Color.orange, Color.red, Color.purple ]), startPoint: .top, endPoint: .bottom))
+            .frame(width: animationManager.isAnimatingSphere ? 140 : 130, height: animationManager.isAnimatingSphere ? 140 : 130)
             .shadow(color: Color.black.opacity(0.2), radius: 8, x: 5, y: 5)
             .rotationEffect(.degrees(rotationAngle))
-            .scaleEffect(isAnimating ? 1.1 : 1.0)
-            .animation(isAnimating ? Animation.easeInOut(duration: 1).repeatForever(autoreverses: true) : .none, value: isAnimating)
+            .scaleEffect(animationManager.isAnimatingSphere ? 1.1 : 1.0)
+            .animation(animationManager.isAnimatingSphere ? Animation.easeInOut(duration: 1).repeatForever(autoreverses: true) : .none, value: animationManager.isAnimatingSphere)
     }
 }
 
-
 struct RainbowRingView: View {
-    @Binding var isAnimating: Bool
+    @ObservedObject var animationManager: AnimationManager
 
     let gradientColors: [Color] = [Color.purple, Color.blue, Color.green, Color.yellow, Color.orange, Color.red, Color.purple]
 
@@ -167,23 +173,46 @@ struct RainbowRingView: View {
         ZStack {
             Circle()
                 .fill(AngularGradient(gradient: Gradient(colors: gradientColors), center: .center))
-                .frame(width: 100, height: 100)
-                .rotationEffect(.degrees(isAnimating ? 360 : 0))
-                .animation(isAnimating ? Animation.linear(duration: 10).repeatForever(autoreverses: false) : .none, value: isAnimating)
+                .frame(width: 130, height: 130)
+                .rotationEffect(.degrees(animationManager.isAnimatingRainbowRing ? 360 : 0))
+                .animation(animationManager.isAnimatingRainbowRing ? Animation.linear(duration: 10).repeatForever(autoreverses: false) : .none, value: animationManager.isAnimatingRainbowRing)
             
             Circle()
                 .strokeBorder(AngularGradient(gradient: Gradient(colors: gradientColors), center: .center), lineWidth: 5)
-                .frame(width: isAnimating ? 99 : 90, height: isAnimating ? 99 : 90)
-                .animation(isAnimating ? Animation.easeInOut(duration: 1).repeatForever(autoreverses: true) : .none, value: isAnimating)
+                .frame(width: animationManager.isAnimatingRainbowRing ? 129 : 70, height: animationManager.isAnimatingRainbowRing ? 129 : 70)
+                .animation(animationManager.isAnimatingRainbowRing ? Animation.easeInOut(duration: 3).repeatForever(autoreverses: true) : .none, value: animationManager.isAnimatingRainbowRing)
         }
     }
 }
 
+struct NeonQuantum: UIViewRepresentable {
+    let videoURL: URL
 
+    init(videoURL: URL?) {
+        self.videoURL = videoURL ?? Bundle.main.url(forResource: "Quantum", withExtension: "mp4")!
+    }
 
+    func makeUIView(context: Context) -> UIView {
+        let player = AVPlayer(url: videoURL)
+        let playerLayer = AVPlayerLayer(player: player)
+        let view = UIView()
+        playerLayer.frame = view.bounds
+        view.layer.addSublayer(playerLayer)
 
+        // Loop the video
+        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: nil) { _ in
+            player.seek(to: .zero)
+            player.play()
+        }
 
+        player.play()
+        return view
+    }
 
+    func updateUIView(_ uiView: UIView, context: Context) {
+        // Update view if needed
+    }
+}
 
 
 enum AnimationType {
@@ -192,4 +221,5 @@ enum AnimationType {
     case colorful2Cube
     case sphere
     case rainbowring
+    case neonquantum
 }

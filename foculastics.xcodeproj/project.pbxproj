@@ -11,6 +11,8 @@
 		C55154BA2AC2FD0400C6F9AE /* TutorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55154B92AC2FD0400C6F9AE /* TutorialView.swift */; };
 		C55E23D42AC4597100F0ABAD /* StopwatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55E23D32AC4597100F0ABAD /* StopwatchView.swift */; };
 		C55E23D62AC463C200F0ABAD /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55E23D52AC463C200F0ABAD /* MainView.swift */; };
+		C57AE2A42AF3C17E002801B3 /* Quantum.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = C57AE2A32AF3C17D002801B3 /* Quantum.mp4 */; };
+		C57AE2A62AF3C563002801B3 /* Cyberpulse.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = C57AE2A52AF3C563002801B3 /* Cyberpulse.mp4 */; };
 		C58CFD3B2AC13C1D007D76F2 /* foculasticsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58CFD3A2AC13C1D007D76F2 /* foculasticsApp.swift */; };
 		C58CFD3D2AC13C1D007D76F2 /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58CFD3C2AC13C1D007D76F2 /* TimerView.swift */; };
 		C58CFD3F2AC13C1F007D76F2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C58CFD3E2AC13C1F007D76F2 /* Assets.xcassets */; };
@@ -27,6 +29,8 @@
 		C55615082ACD9D4B00984EC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C55E23D32AC4597100F0ABAD /* StopwatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopwatchView.swift; sourceTree = "<group>"; };
 		C55E23D52AC463C200F0ABAD /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		C57AE2A32AF3C17D002801B3 /* Quantum.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = Quantum.mp4; path = ../../../../Downloads/Quantum.mp4; sourceTree = "<group>"; };
+		C57AE2A52AF3C563002801B3 /* Cyberpulse.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = Cyberpulse.mp4; path = ../../../../Downloads/Cyberpulse.mp4; sourceTree = "<group>"; };
 		C58CFD372AC13C1D007D76F2 /* foculastics.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = foculastics.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C58CFD3A2AC13C1D007D76F2 /* foculasticsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = foculasticsApp.swift; sourceTree = "<group>"; };
 		C58CFD3C2AC13C1D007D76F2 /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
@@ -83,6 +87,8 @@
 				C58CFD432AC13C1F007D76F2 /* Persistence.swift */,
 				C58CFD3A2AC13C1D007D76F2 /* foculasticsApp.swift */,
 				C58CFD452AC13C1F007D76F2 /* foculastics.xcdatamodeld */,
+				C57AE2A32AF3C17D002801B3 /* Quantum.mp4 */,
+				C57AE2A52AF3C563002801B3 /* Cyberpulse.mp4 */,
 				C58CFD402AC13C1F007D76F2 /* Preview Content */,
 			);
 			path = foculastics;
@@ -163,8 +169,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C57AE2A42AF3C17E002801B3 /* Quantum.mp4 in Resources */,
 				C58CFD422AC13C1F007D76F2 /* Preview Assets.xcassets in Resources */,
 				C58CFD3F2AC13C1F007D76F2 /* Assets.xcassets in Resources */,
+				C57AE2A62AF3C563002801B3 /* Cyberpulse.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -16,7 +16,12 @@ struct TimerView: View {
     @State private var showSettings: Bool = false
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
+    @State private var completedTask: String = ""
     @State private var currentAnimation: AnimationType = .originalCube
+    @State private var isAnimatingSphere = false
+    @State private var isAnimatingRainbowRing = false
+    @StateObject private var animationManager = AnimationManager()
+    
 
     @Binding var showStopwatch: Bool
 
@@ -37,22 +42,33 @@ struct TimerView: View {
 
                 Spacer()
 
-                ZStack {
-                    if currentAnimation == .originalCube {
-                        CubeView(rotationAngle: rotationAngle)
-                            .frame(width: 100, height: 100)
-                            .animation(.easeInOut(duration: 1.0), value: rotationAngle)
-                    } else if currentAnimation == .colorful1Cube {
-                        CubeView1(rotationAngle: rotationAngle)
+                TabView(selection: $currentAnimation) {
+                    CubeView(rotationAngle: rotationAngle)
                         .frame(width: 100, height: 100)
-                        .animation(.easeInOut(duration: 1.0), value: rotationAngle)
-                    } else if currentAnimation == .colorful2Cube {
-                        CubeView2(rotationAngle: rotationAngle)
+                        .tag(AnimationType.originalCube)
+                    
+                    CubeView1(rotationAngle: rotationAngle)
                         .frame(width: 100, height: 100)
-                        .animation(.easeInOut(duration: 1.0), value: rotationAngle)
-                    }
+                        .tag(AnimationType.colorful1Cube)
+                    
+                    CubeView2(rotationAngle: rotationAngle)
+                        .frame(width: 100, height: 100)
+                        .tag(AnimationType.colorful2Cube)
+                    
+                    SphereView(rotationAngle: isAnimatingSphere ? rotationAngle : 0, animationManager: animationManager)
+                        .frame(width: 130, height: 130)
+                        .tag(AnimationType.sphere)
+                    
+                    RainbowRingView(animationManager: animationManager)
+                        .frame(width: 130, height: 130)
+                        .tag(AnimationType.rainbowring)
                 }
-
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                .onAppear {
+                    animationManager.isAnimatingSphere = false
+                    animationManager.isAnimatingRainbowRing = false
+                }
+                
                 Spacer()
                 
                 TextField("Your task", text: $currentTask)
@@ -77,58 +93,17 @@ struct TimerView: View {
                 .foregroundColor(Color.primary)
                 .padding(.bottom, 20)
                 
-                HStack(spacing: 10) {
-                            Button(action: {
-                                switch currentAnimation {
-                                    case .originalCube:
-                                        currentAnimation = .rainbowring
-                                    case .colorful1Cube:
-                                        currentAnimation = .originalCube
-                                    case .colorful2Cube:
-                                        currentAnimation = .colorful1Cube
-                                    case .sphere:
-                                        currentAnimation = .colorful2Cube
-                                    case .rainbowring:
-                                        currentAnimation = .sphere
-                                }
-                            }) {
-                                Image(systemName: "arrow.left")
-                                    .font(.system(size: 24))
-                            }
-                            .padding(.trailing, 90)
-                            .foregroundColor(Color.primary)
-
-                            Button(action: {
-                                showSettings.toggle()
-                            }) {
-                                Image(systemName: "ellipsis")
-                                    .frame(width: 30, height: 30)
-                                    .font(.system(size: 30))
-                            }
-                            .foregroundColor(Color.primary)
-
-                            Button(action: {
-                                switch currentAnimation {
-                                    case .originalCube:
-                                       currentAnimation = .colorful1Cube
-                                   case .colorful1Cube:
-                                       currentAnimation = .colorful2Cube
-                                   case .colorful2Cube:
-                                       currentAnimation = .sphere
-                                   case .sphere:
-                                       currentAnimation = .rainbowring
-                                   case .rainbowring:
-                                       currentAnimation = .originalCube
-                                }
-                            }) {
-                                Image(systemName: "arrow.right")
-                                    .font(.system(size: 24))
-                            }
-                            .padding(.leading, 90)
-                            .foregroundColor(Color.primary)
-                        }
-                        .padding(.bottom, 5)
-                        .padding(.top, 10)
+                Button(action: {
+                        showSettings.toggle()
+                    }) {
+                        Image(systemName: "ellipsis")
+                            .frame(width: 30, height: 30)
+                            .font(.system(size: 30))
+                    }
+                    .foregroundColor(Color.primary)
+                    .padding(.bottom, 5)
+                    .padding(.top, 10)
+                
             }
             .padding()
             .blur(radius: showMessageView || showMenu ? 5 : 0)
@@ -173,7 +148,7 @@ struct TimerView: View {
             if showMessageView {
                 VStack(spacing: 20) {
                     Text(messageText)
-                        .font(.headline)
+                        .font(.system(size: 20))
                         .foregroundColor(.black)
                     
                     if showNextButton {
@@ -187,7 +162,7 @@ struct TimerView: View {
                     } else {
                         HStack(spacing: 30) {
                             Button("Yes") {
-                                messageText = "Great job on completing \(currentTask). Keep the flow!"
+                                messageText = "Great job on completing \(completedTask). Keep the flow!"
                                 showNextButton = true
                             }
                             .font(.system(size: 20))
@@ -228,13 +203,17 @@ struct TimerView: View {
     }
 
     func startOrStopTimer() {
+        completedTask = currentTask
         if isTimerActive {
-            timer?.invalidate()
-            let completedTask = currentTask  // Store the current task in a temporary variable
-            resetTimer()
-            messageText = "Did you complete \(completedTask)?"
-            showMessageView = true
-            showNextButton = false  // Reset to ensure we always start with the question
+                self.timer?.invalidate()
+                elapsedSeconds = 0  // Reset elapsed time to 0
+                rotationAngle = 0
+                animationManager.isAnimatingSphere = false
+                animationManager.isAnimatingRainbowRing = false
+                resetTimer()
+                messageText = "Did you complete \(completedTask)?"  // Use the temporary variable here
+                showMessageView = true
+                showNextButton = false // Reset to ensure we always start with the question
         } else {
             if currentTask.isEmpty {
                 alertMessage = "Please enter a task before starting the time."
@@ -246,14 +225,15 @@ struct TimerView: View {
                 if elapsedSeconds < Int(totalTime) {
                     elapsedSeconds += 1
                     rotationAngle += 45
+                    animationManager.isAnimatingSphere = true
+                    animationManager.isAnimatingRainbowRing = true
                 } else {
                     self.timer?.invalidate()
-                    let completedTask = currentTask  // Store the current task in a temporary variable
-                    resetTimer()
-                    messageText = "Did you complete \(completedTask)?"
-                    showMessageView = true
-                    showNextButton = false  // Reset to ensure we always start with the question
-                    sendNotification()
+                      resetTimer()
+                      messageText = "Did you complete \(completedTask)?"  // Use the temporary variable here
+                      showMessageView = true
+                      showNextButton = false  // Reset to ensure we always start with the question
+                      sendNotification()
                 }
             }
         }
