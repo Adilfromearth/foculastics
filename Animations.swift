@@ -1,6 +1,5 @@
 import SwiftUI
 import Combine
-import AVFoundation
 
 class AnimationManager: ObservableObject {
     @Published var isAnimatingSphere: Bool = false
@@ -155,7 +154,7 @@ struct SphereView: View {
 
     var body: some View {
         Circle()
-            .fill(LinearGradient(gradient: Gradient(colors: [Color.orange, Color.red, Color.purple ]), startPoint: .top, endPoint: .bottom))
+            .fill(LinearGradient(gradient: Gradient(colors: [Color.orange, Color.red, Color.purple]), startPoint: .top, endPoint: .bottom))
             .frame(width: animationManager.isAnimatingSphere ? 140 : 130, height: animationManager.isAnimatingSphere ? 140 : 130)
             .shadow(color: Color.black.opacity(0.2), radius: 8, x: 5, y: 5)
             .rotationEffect(.degrees(rotationAngle))
@@ -185,35 +184,6 @@ struct RainbowRingView: View {
     }
 }
 
-struct NeonQuantum: UIViewRepresentable {
-    let videoURL: URL
-
-    init(videoURL: URL?) {
-        self.videoURL = videoURL ?? Bundle.main.url(forResource: "Quantum", withExtension: "mp4")!
-    }
-
-    func makeUIView(context: Context) -> UIView {
-        let player = AVPlayer(url: videoURL)
-        let playerLayer = AVPlayerLayer(player: player)
-        let view = UIView()
-        playerLayer.frame = view.bounds
-        view.layer.addSublayer(playerLayer)
-
-        // Loop the video
-        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: nil) { _ in
-            player.seek(to: .zero)
-            player.play()
-        }
-
-        player.play()
-        return view
-    }
-
-    func updateUIView(_ uiView: UIView, context: Context) {
-        // Update view if needed
-    }
-}
-
 
 enum AnimationType {
     case originalCube
@@ -221,5 +191,4 @@ enum AnimationType {
     case colorful2Cube
     case sphere
     case rainbowring
-    case neonquantum
 }

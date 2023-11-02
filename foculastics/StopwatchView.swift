@@ -1,6 +1,4 @@
 import SwiftUI
-import AVFoundation
-import AVKit
 
 struct StopwatchView: View {
     @Binding var showStopwatch: Bool
@@ -27,51 +25,50 @@ struct StopwatchView: View {
                 Text(timeString(time: elapsedSeconds))
                     .font(.largeTitle)
                     .padding(.top, 40)
-                
+
                 Spacer()
-                
-                TabView(selection: $currentAnimation) {
-                    CubeView(rotationAngle: rotationAngle)
+
+                ZStack {
+                    if currentAnimation == .originalCube {
+                        CubeView(rotationAngle: rotationAngle)
+                            .frame(width: 100, height: 100)
+                            .animation(.easeInOut(duration: 5.0), value: rotationAngle)
+                    } else if currentAnimation == .colorful1Cube {
+                        CubeView1(rotationAngle: rotationAngle)
                         .frame(width: 100, height: 100)
-                        .tag(AnimationType.originalCube)
-                    
-                    CubeView1(rotationAngle: rotationAngle)
+                        .animation(.easeInOut(duration: 1.0), value: rotationAngle)
+                    } else if currentAnimation == .colorful2Cube {
+                        CubeView2(rotationAngle: rotationAngle)
                         .frame(width: 100, height: 100)
-                        .tag(AnimationType.colorful1Cube)
-                    
-                    CubeView2(rotationAngle: rotationAngle)
-                        .frame(width: 100, height: 100)
-                        .tag(AnimationType.colorful2Cube)
-                    
-                    SphereView(rotationAngle: isAnimatingSphere ? rotationAngle : 0, animationManager: animationManager)
-                        .frame(width: 130, height: 130)
-                        .tag(AnimationType.sphere)
-                    
-                    RainbowRingView(animationManager: animationManager)
-                        .frame(width: 130, height: 130)
-                        .tag(AnimationType.rainbowring)
-                    
-                    NeonQuantum(videoURL: nil)
-                        .frame(width: 200, height: 200)
-                        .tag(AnimationType.neonquantum)
+                        .animation(.easeInOut(duration: 0.9), value: rotationAngle)
+                    } else if currentAnimation == .sphere {
+                        SphereView(rotationAngle: isAnimatingSphere ? rotationAngle : 0, animationManager: animationManager)
+                                            .frame(width: 130, height: 130)
+                                            .animation(isAnimatingSphere ? Animation.linear(duration: 10).repeatForever(autoreverses: false) : .none, value: animationManager.isAnimatingSphere)
+                    }
+                    else if currentAnimation == .rainbowring {
+                        RainbowRingView(animationManager: animationManager)
+                            .frame(width: 130, height: 130)
+                            .animation(isAnimatingRainbowRing ? Animation.linear(duration: 10).repeatForever(autoreverses: false) : .none, value: animationManager.isAnimatingRainbowRing)
+                    }
                 }
-                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                 .onAppear {
-                    animationManager.isAnimatingSphere = false
-                    animationManager.isAnimatingRainbowRing = false
-                }
-                
+                            animationManager.isAnimatingSphere = false // Initialize sphere animation state
+                            animationManager.isAnimatingRainbowRing = false // Initialize rainbow ring animation state
+                        }
+
+
                 Spacer()
-                
+
                 TextField("Your task", text: $currentTask)
                     .font(.title)
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 30)
-                
+
                 Button(action: startOrStopStopwatch) {
                     Text(isStopwatchActive ? "Stop" : "Start")
                         .font(.system(size: 20))
-                    
+                        
                 }
                 .foregroundColor(Color.primary)
                 .padding(.bottom, 30)
@@ -86,16 +83,58 @@ struct StopwatchView: View {
                 .foregroundColor(Color.primary)
                 .padding(.bottom, 20)
                 
-                Button(action: {
-                        showSettings.toggle()
-                    }) {
-                        Image(systemName: "ellipsis")
-                            .frame(width: 30, height: 30)
-                            .font(.system(size: 30))
-                    }
-                    .foregroundColor(Color.primary)
-                    .padding(.bottom, 5)
-                    .padding(.top, 10)
+                HStack(spacing: 10) {
+                            Button(action: {
+                                switch currentAnimation {
+                                    case .originalCube:
+                                        currentAnimation = .rainbowring
+                                    case .colorful1Cube:
+                                        currentAnimation = .originalCube
+                                    case .colorful2Cube:
+                                        currentAnimation = .colorful1Cube
+                                    case .sphere:
+                                        currentAnimation = .colorful2Cube
+                                    case .rainbowring:
+                                        currentAnimation = .sphere
+                                }
+                            }) {
+                                Image(systemName: "arrow.left")
+                                    .font(.system(size: 24))
+                            }
+                            .padding(.trailing, 90)
+                            .foregroundColor(Color.primary)
+
+                            Button(action: {
+                                showSettings.toggle()
+                            }) {
+                                Image(systemName: "ellipsis")
+                                    .frame(width: 30, height: 30)
+                                    .font(.system(size: 30))
+                            }
+                            .foregroundColor(Color.primary)
+
+                            Button(action: {
+                                switch currentAnimation {
+                                    case .originalCube:
+                                       currentAnimation = .colorful1Cube
+                                   case .colorful1Cube:
+                                       currentAnimation = .colorful2Cube
+                                   case .colorful2Cube:
+                                       currentAnimation = .sphere
+                                   case .sphere:
+                                       currentAnimation = .rainbowring
+                                   case .rainbowring:
+                                       currentAnimation = .originalCube
+                                }
+                            }) {
+                                Image(systemName: "arrow.right")
+                                    .font(.system(size: 24))
+                            }
+                            .padding(.leading, 90)
+                            .foregroundColor(Color.primary)
+                        }
+                        .padding(.bottom, 5)
+                        .padding(.top, 10)
             }
             .padding()
             .blur(radius: showMessageView ? 5 : 0)
@@ -121,6 +160,7 @@ struct StopwatchView: View {
                             Button("Yes") {
                                 messageText = "Great job on completing \(currentTask). Keep the flow!"
                                 showNextButton = true
+                                currentTask = ""  // Clear the task field
                             }
                             .font(.system(size: 20))
                             .padding()
@@ -166,7 +206,6 @@ struct StopwatchView: View {
                 messageText = "Did you complete \(currentTask)?"
                 showMessageView = true
                 showNextButton = false
-                currentTask = ""  // Clear the task field
             } else {
                 if currentTask.isEmpty {
                     alertMessage = "Please enter a task before starting the time."
